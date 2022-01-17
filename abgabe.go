@@ -642,7 +642,7 @@ func (e Print) check(t TyState) (bool, int, int) {
 func (b Block) check(t TyState) (bool, int, int) {
 	v, vP, vPi := b.s.check(t)
 	if v {
-		return true, BLOCK, vPi
+		return true, BlockT, vPi
 	} else {
 		return false, vP, vPi
 	}
@@ -652,8 +652,8 @@ func (b Block) check(t TyState) (bool, int, int) {
 
 func (ifel IfEl) check(t TyState) (bool, int, int) {
 	b1, _ := ifel.e.infer(t)
-	b2, b2P, _ := ifel.b1.check(t)
-	b3, b3P, _ := ifel.b2.check(t)
+	b2, b2P, b2Pi := ifel.b1.check(t)
+	b3, b3P, b3Pi := ifel.b2.check(t)
 	if b1 == TyBool && b2 && b3 {
 		return true, IF, 0
 	}
@@ -661,9 +661,9 @@ func (ifel IfEl) check(t TyState) (bool, int, int) {
 		return false, IF, Condition
 	}
 	if !b2 {
-		return false, b2P, BlockT
+		return false, b2P, b2Pi
 	} else {
-		return false, b3P, BlockT
+		return false, b3P, b3Pi
 	}
 
 }
@@ -672,14 +672,14 @@ func (ifel IfEl) check(t TyState) (bool, int, int) {
 
 func (w While) check(t TyState) (bool, int, int) {
 	b1, _ := w.e.infer(t)
-	b2, _, _ := w.b.check(t)
+	b2, b2P, b2Pi := w.b.check(t)
 	if b1 == TyBool && b2 {
 		return true, WHILE, 0
 	}
 	if b1 != TyBool {
 		return false, WHILE, Condition
 	} else {
-		return false, WHILE, BlockT
+		return false, b2P, b2Pi
 	}
 
 }
@@ -1360,8 +1360,8 @@ func parse(s string) (bool, int, Block) {
 	st := State{&s, EOS}
 	inputLength = len(s)
 	next(&st)
-	_, e := parseBlock(&st)
-	if st.tok == EOS {
+	b, e := parseBlock(&st)
+	if st.tok == EOS && b == true {
 		return true, 0, e
 	}
 	errorLength = len(*st.s)
@@ -1477,6 +1477,11 @@ func testParserGood() {
 	fmt.Printf("\n Test 13.3 - While - IllTyped \n")
 	test("{varX:=1;while varX {print varX}}")
 
+	//Neue Test zur Anmerkung 3
+	fmt.Printf("\n Test Int Rückgabewerte Infer/Check - Plus \n")
+	test("{varX:=1;varY:=1;varZ:=true;while 1<4 {print varX; if varX<3 {varX = varX+varY}else{varX = varX+varZ}}}")
+	fmt.Printf("\n Test Int Rückgabewerte Infer/Check - Mult \n")
+	test("{varX:=1;varY:=1;varZ:=true;while 1<4 {print varX; if varX<3 {varX = varX+varY}else{varX = varX*varZ}}}")
 }
 
 // Helper functions to build ASTs by hand
