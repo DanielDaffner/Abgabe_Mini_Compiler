@@ -5,7 +5,7 @@ Kurzbeschreibung
 
   Ein gegebener Input wird anhand der Regeln einer einfachen imperativen Programmiersprache geparsed, überprüft und anschließend interpretiert.
 
-Einfache imperative Programmiersprache / IMP
+Einfache imperative Programmiersprache / IMP [^1]
   
   Syntax
     
