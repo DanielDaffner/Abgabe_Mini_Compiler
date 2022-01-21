@@ -288,90 +288,317 @@ Used Interface for Interpreter
     
 Tests for different possibilities
 
-  [Test 1](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1401-L1404)
+  [Test 1 Declaration Statement](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1401-L1404)
   
     Test 1.1 - Declaration
-  
+    
+	Input: {varX:=3}
+ 	Output Parse: varX := 3
+	Check: true 
+	Evalutaion: 
+
     Test 1.2- False Declaration Example - Error at char 8
+    
+	Input: {varX:==3}
+ 	ERROR ON PARSE 
+ 	AT CHARACTER 8 
   
-  [Test 2](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1406-L1411)
+  [Test 2 Command Sequence Statement](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1406-L1411)
   
     Test 2.1 - Command Sequence - two expressions
   
+	Input: {varX:=3;varY:=4}
+ 	Output Parse: varX := 3 ; varY := 4
+ 	Check: true 
+ 	Evalutaion: 
+
     Test 2.2 - Command Sequence - three expressions
   
+	Input: {varX:=3;varY:=4;varZ:=7}
+ 	Output Parse: varX := 3 ; varY := 4 ; varZ := 7
+ 	Check: true 
+ 	Evalutaion: 
+
     Test 2.3 - False Command Sequence - Error at char 18]()
     
-  [Test 3](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1413-L1416)
+	Input: {varX:=3;varY:=4;;varZ:=7}
+ 	ERROR ON PARSE 
+ 	AT CHARACTER 18 
+
+  [Test 3 Print Statement](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1413-L1416)
   
     Test 3.1 - Print - print expression
   
+	Input: {print false; print true}
+ 	Output Parse: print: false ; print: true
+ 	Check: true 
+ 	Evalutaion: 
+ 	false
+ 	true
+
     Test 3.2 - False Print - print expression
+    
+	Input: {print fasle; print true}
+ 	Output Parse: print: fasle ; print: true
+ 	Check: false 
+ 	ERROR ON EVALUATION 
+ 	Illtyped Statement found, StatementType = PRINT, Reason = Variable not declarated
   
-  [Test 4](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1418-L1421)
+  [Test 4 Assignment Statement](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1418-L1421)
   
     Test 4.1 - Assignment - set varX 4
+    
+	Input: {varX:=3;print varX; varX=4; print varX}
+ 	Output Parse: varX := 3 ; print: varX ; varX = 4 ; print: varX
+ 	Check: true 
+ 	Evalutaion: 
+ 	3
+ 	4
   
     Test 4.2 - False Assignment - not declarated
+    
+	Input: {varX=4; print varX}
+ 	Output Parse: varX = 4 ; print: varX
+ 	Check: false 
+ 	ERROR ON EVALUATION 
+ 	Illtyped Statement found, StatementType = ASSIGN, Reason = Variable not declarated
   
-  [Test 5](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1423-L1426)
+  [Test 5 Plus Expression](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1423-L1426)
   
     Test 5.1 - Plus - print varX + varY
-  
+    
+	Input: {varX:=3;varY:=4;print varX+varY}
+ 	Output Parse: varX := 3 ; varY := 4 ; print: (varX+varY)
+ 	Check: true 
+ 	Evalutaion: 
+ 	7
+
     Test 5.2 - False Plus - bool + int
-  
-  [Test 6](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1428-L1431)
+    
+	Input: {varX:=true;varY:=4;print varX+varY}
+ 	Output Parse: varX := true ; varY := 4 ; print: (varX+varY)
+ 	Check: false 
+ 	ERROR ON EVALUATION 
+ 	Illtyped Statement found, StatementType = PRINT, Reason = IllTyped Addition
+
+  [Test 6 Multiplication Expression](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1428-L1431)
   
     Test 6.1 - Mult - print varX * varY
-  
+    
+	Input: {varX:=3;varY:=4;print varX*varY}
+ 	Output Parse: varX := 3 ; varY := 4 ; print: (varX*varY)
+ 	Check: true 
+ 	Evalutaion: 
+ 	12
+
     Test 6.2 - False Mult - bool * int
+    
+	Input: {varX:=true;varY:=4;print varX*varY}
+ 	Output Parse: varX := true ; varY := 4 ; print: (varX*varY)
+ 	Check: false 
+ 	ERROR ON EVALUATION 
+ 	Illtyped Statement found, StatementType = PRINT, Reason = IllTyped Multiplication
   
-  [Test 7](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1433-L1436)
+  [Test 7 Lesser Expression](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1433-L1436)
   
     Test 7.1 - Less - print varX < varY
+    
+	Input: {varX:=3;varY:=4;print varX<varY}
+ 	Output Parse: varX := 3 ; varY := 4 ; print: (varX<varY)
+ 	Check: true 
+ 	Evalutaion: 
+ 	true
   
     Test 7.2 - False Less - bool < int
-  
-  [Test 8](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1438-L1442)
+    
+	Input: {varX:=true;varY:=4;print varX<varY}
+ 	Output Parse: varX := true ; varY := 4 ; print: (varX<varY)
+ 	Check: false 
+ 	ERROR ON EVALUATION 
+ 	Illtyped Statement found, StatementType = PRINT, Reason = IllTyped Lesser
+
+  [Test 8 And Expression](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1438-L1442)
   
     Test 8.1 - And - print varX && varY
+    
+	Input: {varX:=true;varY:=true;print varX&&varY}
+ 	Output Parse: varX := true ; varY := true ; print: (varX&&varY)
+ 	Check: true 
+ 	Evalutaion: 
+ 	true
+ 
+	Input: {varX:=false;varY:=true;print varX&&varY}
+	Output Parse: varX := false ; varY := true ; print: (varX&&varY)
+ 	Check: true 
+ 	Evalutaion: 
+ 	false
   
     Test 8.2 - False And - bool && int
-  
-  [Test 9](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1444-L1448)
+    
+	Input: {varX:=true;varY:=4;print varX&&varY}
+ 	Output Parse: varX := true ; varY := 4 ; print: (varX&&varY)
+ 	Check: false 
+ 	ERROR ON EVALUATION 
+ 	Illtyped Statement found, StatementType = PRINT, Reason = IllTyped Conjuction
+
+  [Test 9 Or Expression](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1444-L1448)
   
     Test 9.1 - Or - print varX || varY
+    
+	Input: {varX:=true;varY:=false;print varX||varY}
+ 	Output Parse: varX := true ; varY := false ; print: (varX||varY)
+ 	Check: true 
+ 	Evalutaion: 
+ 	true
+
+	Input: {varX:=false;varY:=false;print varX||varY}
+ 	Output Parse: varX := false ; varY := false ; print: (varX||varY)
+ 	Check: true 
+ 	Evalutaion: 
+ 	false
   
-    [Test 9.2 - False Or - bool || int
-  
-  [Test 10](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1450-L1456)
+    Test 9.2 - False Or - bool || int
+    
+	Input: {varX:=true;varY:=4;print varX||varY}
+ 	Output Parse: varX := true ; varY := 4 ; print: (varX||varY)
+ 	Check: false 
+ 	ERROR ON EVALUATION 
+ 	Illtyped Statement found, StatementType = PRINT, Reason = IllTyped Disjunction
+
+  [Test 10 Equality Expression](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1450-L1456)
   
     Test 10.1 - Equality - print varX == varY
+    	
+	Input: {varX:=true;varY:=false;print varX==varY}
+ 	Output Parse: varX := true ; varY := false ; print: (varX==varY)
+ 	Check: true 
+ 	Evalutaion: 
+ 	false
+
+	Input: {varX:=false;varY:=false;print varX==varY}
+ 	Output Parse: varX := false ; varY := false ; print: (varX==varY)
+ 	Check: true 
+ 	Evalutaion: 
+ 	true
+
+	Input: {varX:=1;varY:=1;print varX==varY}
+ 	Output Parse: varX := 1 ; varY := 1 ; print: (varX==varY)
+ 	Check: true 
+ 	Evalutaion: 
+ 	true
+
+	Input: {varX:=1;varY:=2;print varX==varY}
+ 	Output Parse: varX := 1 ; varY := 2 ; print: (varX==varY)
+ 	Check: true 
+ 	Evalutaion: 
+ 	false
   
     Test 10.2 - False Equality - bool == int
-  
-  [Test 11](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1458-L1462)
+    
+	Input: {varX:=true;varY:=4;print varX==varY}
+ 	Output Parse: varX := true ; varY := 4 ; print: (varX==varY)
+ 	Check: false 
+ 	ERROR ON EVALUATION 
+ 	Illtyped Statement found, StatementType = PRINT, Reason = IllTyped Equality
+
+  [Test 11 Negation Expression](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1458-L1462)
   
     Test 11.1 - Negation - print !varX
+    
+	Input: {varX:=true;print !varX}
+ 	Output Parse: varX := true ; print: !varX
+ 	Check: true 
+ 	Evalutaion: 
+ 	false
+
+	Input: {varX:=false;print !varX}
+ 	Output Parse: varX := false ; print: !varX
+ 	Check: true 
+ 	Evalutaion: 
+ 	true
   
     Test 11.2 - False Negation - IllTyped
-  
-  [Test 12](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1464-L1471)
+    
+	Input: {varX:=1;print !varX}
+ 	Output Parse: varX := 1 ; print: !varX
+ 	Check: false 
+ 	ERROR ON EVALUATION 
+ 	Illtyped Statement found, StatementType = PRINT, Reason = IllTyped Negation
+
+  [Test 12  If Else Statement](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1464-L1471)
   
     Test 12.1 - If Else - if varX { print true } else { print false }
-  
+    
+	Input: {varX:=true;if varX {print true} else {print false}}
+	Output Parse: varX := true ; if varX then print: true else print: false
+ 	Check: true 
+ 	Evalutaion: 
+ 	true
+
     Test 12.2 - If Else - if varX == 1 { print true } else { print false }
-  
-  [Test 13](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1473-L1478)
+    
+	Input: {varX:=false;if varX {print true} else {print false}}
+ 	Output Parse: varX := false ; if varX then print: true else print: false
+ 	Check: true 
+ 	Evalutaion: 
+ 	false
+
+	Input: {varX:=2;if varX == 2 {print true} else {print false}}
+ 	Output Parse: varX := 2 ; if (varX==2) then print: true else print: false
+ 	Check: true 
+ 	Evalutaion: 
+ 	true
+    
+     Test 12.3 - If Else - IllTyped 
+ 
+	Input: {varX:=1;if varX {print true} else {print false}}
+ 	Output Parse: varX := 1 ; if varX then print: true else print: false
+ 	Check: false 
+ 	ERROR ON EVALUATION 
+ 	Illtyped Statement found, StatementType = IF, Reason = Condition IllTyped
+
+  [Test 13 While Statement](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L1473-L1478)
   
     Test 13.1 - While - varX:=1; while varX<4 { print varX; varX+1}
+    
+	Input: {varX:=1;while varX<4 {print varX; varX = varX+1}}
+ 	Output Parse: varX := 1 ;  while (varX<4) { print: varX ; varX = (varX+1) } 
+ 	Check: true 
+ 	Evalutaion: 
+ 	1
+ 	2
+ 	3
   
     Test 13.2 - While - varX:=true; while varX { print varX; varX=false}
+    
+	Input: {varX:=true;while varX {print varX; varX = false}}
+ 	Output Parse: varX := true ;  while varX { print: varX ; varX = false } 
+ 	Check: true 
+ 	Evalutaion: 
+ 	true
   
     Test 13.3 - While - IllTyped
-     
-  [Test 14](Link)
+    
+	Input: {varX:=1;while varX {print varX}}
+ 	Output Parse: varX := 1 ;  while varX { print: varX } 
+ 	Check: false 
+ 	ERROR ON EVALUATION 
+ 	Illtyped Statement found, StatementType = WHILE, Reason = Condition IllTyped
+ 
+  [Test 14 ExpressionErrorCode Values](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/f601a102fff12f22166031231dc74ccdf336769c/abgabe.go#L1484-L1488)
   
     [Test 14.1 - return value infer/check - Plus](Link)
+    
+	Input: {varX:=1;varY:=1;varZ:=true;while 1<4 {print varX; if varX<3 {varX = varX+varY}else{varX = varX+varZ}}}
+ 	Output Parse: varX := 1 ; varY := 1 ; varZ := true ;  while (1<4) { print: varX ; if (varX<3) then varX = (varX+varY) else varX = (varX+varZ) } 
+ 	Check: false 
+ 	ERROR ON EVALUATION 
+ 	Illtyped Statement found, StatementType = ASSIGN, Reason = IllTyped Addition
   
     [Test 14.2 - return value infer/check - Mult](Link)
+    
+	Input: {varX:=1;varY:=1;varZ:=true;while 1<4 {print varX; if varX<3 {varX = varX+varY}else{varX = varX*varZ}}}
+	Output Parse: varX := 1 ; varY := 1 ; varZ := true ;  while (1<4) { print: varX ; if (varX<3) then varX = (varX+varY) else varX = (varX*varZ) } 
+ 	Check: false 
+ 	ERROR ON EVALUATION 
+ 	Illtyped Statement found, StatementType = ASSIGN, Reason = IllTyped Multiplication
