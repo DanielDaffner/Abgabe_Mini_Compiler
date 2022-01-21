@@ -11,7 +11,7 @@ import "strconv"
 type Exp interface {
 	pretty() string
 	eval(s ValState) Val
-	infer(t TyState) (Type, int)
+	infer(t TyState) (Type, ErrorCodeExpression)
 }
 
 // Statement
@@ -19,7 +19,7 @@ type Exp interface {
 type Stmt interface {
 	pretty() string
 	eval(s ValState)
-	check(t TyState) (bool, int, int)
+	check(t TyState) (bool, ErrorCodeStatement, ErrorCodeExpression)
 }
 
 var varName string
@@ -64,6 +64,9 @@ type Print struct {
 
 type ValState map[string]Val
 type TyState map[string]Type
+
+type ErrorCodeStatement int
+type ErrorCodeExpression int
 
 // Values
 
@@ -115,18 +118,18 @@ const (
 )
 
 const (
-	Integer        int = 1
-	Booleans       int = 2
-	Addition       int = 3
-	Multiplication int = 4
-	Disjunction    int = 5
-	Conjuction     int = 6
-	Negation       int = 7
-	Equality       int = 8
-	Lesser         int = 9
-	Variables      int = 10
-	Condition      int = 11
-	BlockT         int = 12
+	Integer        ErrorCodeExpression = 1
+	Booleans       ErrorCodeExpression = 2
+	Addition       ErrorCodeExpression = 3
+	Multiplication ErrorCodeExpression = 4
+	Disjunction    ErrorCodeExpression = 5
+	Conjuction     ErrorCodeExpression = 6
+	Negation       ErrorCodeExpression = 7
+	Equality       ErrorCodeExpression = 8
+	Lesser         ErrorCodeExpression = 9
+	Variables      ErrorCodeExpression = 10
+	Condition      ErrorCodeExpression = 11
+	BlockT         ErrorCodeExpression = 12
 )
 
 func showType(t Type) string {
@@ -494,15 +497,15 @@ func (b Block) eval(s ValState) {
 
 // Type inferencer/checker
 
-func (x Bool) infer(t TyState) (Type, int) {
+func (x Bool) infer(t TyState) (Type, ErrorCodeExpression) {
 	return TyBool, Booleans
 }
 
-func (x Num) infer(t TyState) (Type, int) {
+func (x Num) infer(t TyState) (Type, ErrorCodeExpression) {
 	return TyInt, Integer
 }
 
-func (e Mult) infer(t TyState) (Type, int) {
+func (e Mult) infer(t TyState) (Type, ErrorCodeExpression) {
 	t1, _ := e[0].infer(t)
 	t2, _ := e[1].infer(t)
 	if t1 == TyInt && t2 == TyInt {
@@ -511,7 +514,7 @@ func (e Mult) infer(t TyState) (Type, int) {
 	return TyIllTyped, Multiplication
 }
 
-func (e Plus) infer(t TyState) (Type, int) {
+func (e Plus) infer(t TyState) (Type, ErrorCodeExpression) {
 	t1, _ := e[0].infer(t)
 	t2, _ := e[1].infer(t)
 	if t1 == TyInt && t2 == TyInt {
@@ -520,7 +523,7 @@ func (e Plus) infer(t TyState) (Type, int) {
 	return TyIllTyped, Addition
 }
 
-func (e And) infer(t TyState) (Type, int) {
+func (e And) infer(t TyState) (Type, ErrorCodeExpression) {
 	t1, _ := e[0].infer(t)
 	t2, _ := e[1].infer(t)
 	if t1 == TyBool && t2 == TyBool {
@@ -529,7 +532,7 @@ func (e And) infer(t TyState) (Type, int) {
 	return TyIllTyped, Conjuction
 }
 
-func (e Or) infer(t TyState) (Type, int) {
+func (e Or) infer(t TyState) (Type, ErrorCodeExpression) {
 	t1, _ := e[0].infer(t)
 	t2, _ := e[1].infer(t)
 	if t1 == TyBool && t2 == TyBool {
@@ -539,7 +542,7 @@ func (e Or) infer(t TyState) (Type, int) {
 }
 
 // Negation
-func (e Neg) infer(t TyState) (Type, int) {
+func (e Neg) infer(t TyState) (Type, ErrorCodeExpression) {
 	t1, _ := e[0].infer(t)
 
 	if t1 == TyBool {
@@ -549,7 +552,7 @@ func (e Neg) infer(t TyState) (Type, int) {
 }
 
 // Equality Test
-func (e Equ) infer(t TyState) (Type, int) {
+func (e Equ) infer(t TyState) (Type, ErrorCodeExpression) {
 	t1, _ := e[0].infer(t)
 	t2, _ := e[1].infer(t)
 	if t1 == TyBool && t2 == TyBool {
@@ -562,7 +565,7 @@ func (e Equ) infer(t TyState) (Type, int) {
 }
 
 //Lesser Test
-func (e Les) infer(t TyState) (Type, int) {
+func (e Les) infer(t TyState) (Type, ErrorCodeExpression) {
 	t1, _ := e[0].infer(t)
 	t2, _ := e[1].infer(t)
 	if t1 == TyInt && t2 == TyInt {
@@ -573,7 +576,7 @@ func (e Les) infer(t TyState) (Type, int) {
 
 // Vars
 
-func (x Var) infer(t TyState) (Type, int) {
+func (x Var) infer(t TyState) (Type, ErrorCodeExpression) {
 	y := (string)(x)
 	ty, ok := t[y]
 	if ok {
@@ -586,7 +589,7 @@ func (x Var) infer(t TyState) (Type, int) {
 
 // Check decl
 
-func (e Decl) check(t TyState) (bool, int, int) {
+func (e Decl) check(t TyState) (bool, ErrorCodeStatement, ErrorCodeExpression) {
 	v, vP := e.rhs.infer(t)
 	x := (string)(e.lhs)
 	t[x] = v
@@ -598,7 +601,7 @@ func (e Decl) check(t TyState) (bool, int, int) {
 
 // Check assign
 
-func (assign Assign) check(t TyState) (bool, int, int) {
+func (assign Assign) check(t TyState) (bool, ErrorCodeStatement, ErrorCodeExpression) {
 	v, vP := assign.value.infer(t)
 	x, ok := t[assign.name]
 	if ok {
@@ -611,12 +614,11 @@ func (assign Assign) check(t TyState) (bool, int, int) {
 	} else {
 		return false, ASSIGN, Variables
 	}
-	return false, ASSIGN, vP
 }
 
 // Check coms
 
-func (e ComS) check(t TyState) (bool, int, int) {
+func (e ComS) check(t TyState) (bool, ErrorCodeStatement, ErrorCodeExpression) {
 	v, vP, vPi := e[0].check(t)
 	x, xP, xPi := e[1].check(t)
 	if v && x {
@@ -629,7 +631,7 @@ func (e ComS) check(t TyState) (bool, int, int) {
 	}
 }
 
-func (e Print) check(t TyState) (bool, int, int) {
+func (e Print) check(t TyState) (bool, ErrorCodeStatement, ErrorCodeExpression) {
 	v, vPi := e.e.infer(t)
 	if v != TyIllTyped {
 		return true, PRINT, vPi
@@ -639,10 +641,10 @@ func (e Print) check(t TyState) (bool, int, int) {
 
 // Block
 
-func (b Block) check(t TyState) (bool, int, int) {
+func (b Block) check(t TyState) (bool, ErrorCodeStatement, ErrorCodeExpression) {
 	v, vP, vPi := b.s.check(t)
 	if v {
-		return true, BlockT, vPi
+		return true, BLOCK, vPi
 	} else {
 		return false, vP, vPi
 	}
@@ -650,7 +652,7 @@ func (b Block) check(t TyState) (bool, int, int) {
 
 // If Else
 
-func (ifel IfEl) check(t TyState) (bool, int, int) {
+func (ifel IfEl) check(t TyState) (bool, ErrorCodeStatement, ErrorCodeExpression) {
 	b1, _ := ifel.e.infer(t)
 	b2, b2P, b2Pi := ifel.b1.check(t)
 	b3, b3P, b3Pi := ifel.b2.check(t)
@@ -670,7 +672,7 @@ func (ifel IfEl) check(t TyState) (bool, int, int) {
 
 // While
 
-func (w While) check(t TyState) (bool, int, int) {
+func (w While) check(t TyState) (bool, ErrorCodeStatement, ErrorCodeExpression) {
 	b1, _ := w.e.infer(t)
 	b2, b2P, b2Pi := w.b.check(t)
 	if b1 == TyBool && b2 {
@@ -794,7 +796,7 @@ func (s State) printToken() string {
 	return "Not a Token"
 }
 
-func printToken(i int) string {
+func printToken(i ErrorCodeStatement) string {
 	switch {
 	case i == 0:
 		return "EOS"
@@ -866,7 +868,7 @@ func printToken(i int) string {
 	return "Not a Token"
 }
 
-func printExp(i int) string {
+func printExp(i ErrorCodeExpression) string {
 	switch {
 	case i == 1:
 		return "Integer"
@@ -991,7 +993,7 @@ func next(s *State) {
 	s.tok = tok
 }
 
-// Parse
+// Block ::= { CmdS }
 func parseBlock(s *State) (bool, Block) {
 
 	if s.tok != OPENC {
@@ -1012,6 +1014,7 @@ func parseBlock(s *State) (bool, Block) {
 	return true, Block{t}
 }
 
+// CmdS ::= Stmt CmdS2
 func parseComS(s *State) (bool, Stmt) {
 	b, e := parseStatement(s)
 	if !b {
@@ -1020,7 +1023,7 @@ func parseComS(s *State) (bool, Stmt) {
 	return parseComS2(s, e)
 }
 
-// Or2 ::= == T Or2
+// CmdS2 ::= ; Stmt CmdS2 |
 func parseComS2(s *State, e Stmt) (bool, Stmt) {
 	if s.tok == COMS {
 
@@ -1036,6 +1039,7 @@ func parseComS2(s *State, e Stmt) (bool, Stmt) {
 	return true, e
 }
 
+// Stmt ::= ASS | DECL | IFEL | WHILE | PRINT
 func parseStatement(s *State) (bool, Stmt) {
 	next(s)
 
@@ -1137,7 +1141,7 @@ func parseOr2(s *State, e Exp) (bool, Exp) {
 	return true, e
 }
 
-// And ::= Equ And(2
+// And ::= Equ And2
 func parseAnd(s *State) (bool, Exp) {
 	b, e := parseEqu(s)
 	if !b {
@@ -1477,11 +1481,36 @@ func testParserGood() {
 	fmt.Printf("\n Test 13.3 - While - IllTyped \n")
 	test("{varX:=1;while varX {print varX}}")
 
-	//Neue Test zur Anmerkung 3
-	fmt.Printf("\n Test Int Rückgabewerte Infer/Check - Plus \n")
+	//Test 14 Different Expression Error Types
+	fmt.Printf("\n Test 14.1 - return value infer/check - Plus \n")
 	test("{varX:=1;varY:=1;varZ:=true;while 1<4 {print varX; if varX<3 {varX = varX+varY}else{varX = varX+varZ}}}")
-	fmt.Printf("\n Test Int Rückgabewerte Infer/Check - Mult \n")
+	fmt.Printf("\n Test 14.2 - return value infer/check - Mult \n")
 	test("{varX:=1;varY:=1;varZ:=true;while 1<4 {print varX; if varX<3 {varX = varX+varY}else{varX = varX*varZ}}}")
+
+	fmt.Printf("\n Test Program \n")
+	test("\n" +
+		"{\n" +
+		"varx := 6;\n" +
+		"vary := 3;\n" +
+		"varp := varx + vary;\n" +
+		"varm := 2 * vary;\n" +
+		"vart := true;\n" +
+		"varf := varx < vary;\n" +
+		"while vary < varx\n" +
+		"{\n" +
+		"  if varf\n" +
+		"  {\n" +
+		"    vary = vary + 1;\n" +
+		"    varf = !varf\n" +
+		"  }\n" +
+		"  else\n" +
+		"  {\n" +
+		"    varf = !varf\n" +
+		"  };\n" +
+		"  print vary\n" +
+		"};\n" +
+		"print true\n" +
+		"}\n")
 }
 
 // Helper functions to build ASTs by hand
