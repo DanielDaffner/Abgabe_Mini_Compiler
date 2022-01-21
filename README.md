@@ -1,11 +1,11 @@
 # Abgabe_MSE
 Mini-Compiler Projekt für Modelbasierte Software Entwicklung
 
-Kurzbeschreibung:
+Kurzbeschreibung
 
   Ein gegebener Input wird anhand der Regeln einer einfachen imperativen Programmiersprache geparsed, überprüft und anschließend interpretiert.
 
-Einfache imperative Programmiersprache / IMP:
+Einfache imperative Programmiersprache / IMP
   
   Syntax
     
@@ -240,6 +240,8 @@ Einfache imperative Programmiersprache / IMP:
         ----------------------------------------
         S |- print e => S
              
+[^1]: Source:  [Lecture-Semantics](https://sulzmann.github.io/ModelBasedSW/lec-semantics.html#(6))
+
 Used Interfaces for Typechecker
 
 Used Interfaces for Interpreter
