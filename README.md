@@ -265,11 +265,11 @@ Used [Interface](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7
     
     eval(s ValState) Val
     
-      T
+      executes the given expression and returns the created Value
     
     infer(t TyState) (Type, ErrorCodeExpression)
     
-      Checks for given expressions value type (TyInt, TyBool, IllTyped) and returns it together with ErrorCodeExpression of the corresponding expression type
+      Checks for given expression's value type (TyInt, TyBool, IllTyped) and returns it together with ErrorCodeExpression of the corresponding expression type
       
       Examples
       
@@ -301,7 +301,7 @@ Used [Interface](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7
     
     eval(s ValState)
     
-      T
+      executes the given statement
     
     check(t TyState) (bool, ErrorCodeStatement, ErrorCodeExpression)
     
