@@ -1485,7 +1485,7 @@ func testParserGood() {
 	fmt.Printf("\n Test 14.2 - return value infer/check - Mult \n")
 	test("{varX:=1;varY:=1;varZ:=true;while 1<4 {print varX; if varX<3 {varX = varX+varY}else{varX = varX*varZ}}}")
 
-	fmt.Printf("\n Test Program \n")
+	fmt.Printf("\n Test 15 - Program of a variety  of statements \n")
 	test("" +
 		"{" +
 		"varx := 6;" +
