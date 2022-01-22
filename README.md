@@ -4,6 +4,8 @@ Mini-Compiler Projekt für Modelbasierte Software Entwicklung
 Kurzbeschreibung
 
   Ein gegebener Input wird anhand der Regeln einer einfachen imperativen Programmiersprache geparsed, überprüft und anschließend interpretiert.
+  
+  Der Typ-Check wird vor der Evalutation durchgeführt
 
 Einfache imperative Programmiersprache / IMP [^1]
   
@@ -242,7 +244,7 @@ Einfache imperative Programmiersprache / IMP [^1]
              
 [^1]: Source:  [Lecture-Semantics](https://sulzmann.github.io/ModelBasedSW/lec-semantics.html#(6))
 
-Used [Interface](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L11-L15) for Typechecker
+Used [Interface](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L11-L15) for Expression
 
     type Exp interface {
 	    pretty() string
@@ -250,7 +252,7 @@ Used [Interface](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7
 	    infer(t TyState) (Type, ErrorCodeExpression)
     }
     
-  Methods of [Exp](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L19-L23) interface
+  Methods of Exp interface
   
     pretty() string
     
@@ -264,7 +266,7 @@ Used [Interface](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7
     
       T
     
-Used Interface for Interpreter
+Used [Interface](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L19-L23) for Statement
 
     type Stmt interface {
 	    pretty() string
