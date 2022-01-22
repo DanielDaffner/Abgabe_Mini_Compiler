@@ -453,11 +453,9 @@ func (decl Decl) eval(s ValState) {
 
 // Variable assignment
 func (assign Assign) eval(s ValState) {
-	v, ok := s[assign.name]
-	if ok {
-		v = assign.value.eval(s)
-		s[assign.name] = v
-	}
+	v := s[assign.name]
+	v = assign.value.eval(s)
+	s[assign.name] = v
 }
 
 // While
@@ -1488,29 +1486,29 @@ func testParserGood() {
 	test("{varX:=1;varY:=1;varZ:=true;while 1<4 {print varX; if varX<3 {varX = varX+varY}else{varX = varX*varZ}}}")
 
 	fmt.Printf("\n Test Program \n")
-	test("\n" +
-		"{\n" +
-		"varx := 6;\n" +
-		"vary := 3;\n" +
-		"varp := varx + vary;\n" +
-		"varm := 2 * vary;\n" +
-		"vart := true;\n" +
-		"varf := varx < vary;\n" +
-		"while vary < varx\n" +
-		"{\n" +
-		"  if varf\n" +
-		"  {\n" +
-		"    vary = vary + 1;\n" +
-		"    varf = !varf\n" +
-		"  }\n" +
-		"  else\n" +
-		"  {\n" +
-		"    varf = !varf\n" +
-		"  };\n" +
-		"  print vary\n" +
-		"};\n" +
-		"print true\n" +
-		"}\n")
+	test("" +
+		"{" +
+		"varx := 6;" +
+		"vary := 3;" +
+		"varp := varx + vary;" +
+		"varm := 2 * vary;" +
+		"vart := true;" +
+		"varf := varx < vary;" +
+		"while vary < varx" +
+		"{" +
+		"  if varf" +
+		"  {" +
+		"    vary = vary + 1;" +
+		"    varf = !varf" +
+		"  }" +
+		"  else" +
+		"  {" +
+		"    varf = !varf" +
+		"  };" +
+		"  print vary" +
+		"};" +
+		"print true" +
+		"}")
 }
 
 // Helper functions to build ASTs by hand
