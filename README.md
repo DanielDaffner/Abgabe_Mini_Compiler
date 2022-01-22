@@ -253,10 +253,15 @@ Used [Interface](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7
     }
     
   Methods of Exp interface
-  
     pretty() string
     
-      T
+      returns a string displaying the corresponding expression 
+      
+      Examples
+      
+      Plus.pretty() => "e1 + e2"
+      Mult.pretty() => "e1 * e2"
+      Neg.pretty()  => "!e1"
     
     eval(s ValState) Val
     
@@ -264,7 +269,17 @@ Used [Interface](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7
     
     infer(t TyState) (Type, ErrorCodeExpression)
     
-      T
+      Checks for given expressions value type (TyInt, TyBool, IllTyped) and returns it together with ErrorCodeExpression of the corresponding expression type
+      
+      Examples
+      
+      e1 = "1 + 1"
+      e2 = "true && false"
+      e3 = "1 + true"
+      
+      e1.infer() => returns (TyInt,Addition) 
+      e2.infer() => returns (TyBool,Conjunction)
+      e3.infer() => returns (IllTyped,Addition)
     
 Used [Interface](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7b71241ad48128fd4002078c1d8dde65b08dd/abgabe.go#L19-L23) for Statement
 
@@ -277,8 +292,12 @@ Used [Interface](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7
   Methods of Stmt interface
     
     pretty() string
-    
-      T
+          
+      Examples
+      
+      Decl.pretty()   => "v1 := e"
+      Assign.pretty() => "v1 = e"
+      Print.pretty()  => "print e"
     
     eval(s ValState)
     
@@ -286,7 +305,19 @@ Used [Interface](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/e0b7
     
     check(t TyState) (bool, ErrorCodeStatement, ErrorCodeExpression)
     
-      T
+      Checks if expressions in given statement are illtyped
+      and returns the result together with the ErrorCodeStatement 
+      and ErrorCodeExpression corresponding to the given statement's and expression's type
+      
+      Examples
+      
+      stmt1 = "varX := 1"
+      stmt2 = "varX := true"
+      stmt3 = "varX := 1; varY := true; varZ := varX + varY"
+      
+      stmt1.check() => returns (true,TyInt,Integer) 
+      stmt2.check() => returns (true,TyBool,Boolean)
+      stmt3.check() => returns (false,IllTyped,Addition)
     
 Tests for different possibilities
 
