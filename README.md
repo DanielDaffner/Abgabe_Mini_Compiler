@@ -635,3 +635,30 @@ Tests for different possibilities
  	Check: false 
  	ERROR ON EVALUATION 
  	Illtyped Statement found, StatementType = ASSIGN, Reason = IllTyped Multiplication
+	
+  [Test 15 ExpressionErrorCode Values](https://github.com/DanielDaffner/Abgabe_Mini_Compiler/blob/2a4cf88aac33e85baa75779074d599abef72aa7b/abgabe.go#L1488-L1511)
+  
+  	Input: {
+		varx := 6;
+		vary := 3;
+		varp := varx + vary;
+		varm := 2 * vary;
+		vart := true;
+		varf := varx < vary;
+		while vary < varx {  
+		    if varf  {vary = vary + 1;    varf = !varf}
+		    else  {varf = !varf  };
+		    print vary
+		    };
+		print true
+		}
+	Output Parse: varx := 6 ; vary := 3 ; varp := (varx+vary) ; varm := (2*vary) ; vart := true ; varf := (varx<vary) ;  while (vary<varx) { if varf then vary = (vary+1) ; 	varf = !varf else varf = !varf ; print: vary }  ; print: true
+ 	Check: true 
+ 	Evalutaion: 
+	3
+	4
+	4
+	5
+	5
+	6
+	true
