@@ -5,7 +5,7 @@ Kurzbeschreibung
 
   Ein gegebener Input wird anhand der Regeln einer einfachen imperativen Programmiersprache geparsed, überprüft und anschließend interpretiert.
   
-  Der Typ-Check wird vor der Evalutation durchgeführt
+  Zuerst wird versucht den Input zu parsen, anschließend wird auf dem Ergebnis ein Typ-Check durchgeführt, falls dieser erfolgreich ist, wird das Ergebnis des Parsens evaluiert.
 
 Einfache imperative Programmiersprache / IMP [^1]
   
